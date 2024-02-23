@@ -7,13 +7,56 @@ unsigned int ACC;
 // PROTOTYPES ================================================================================
 int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_signal);
 void setFlags (unsigned int ACC);
+void printFlags ();
 unsigned char twosComp(unsigned char operand);
 void printBin(unsigned char data, unsigned char data_width);
 
 // MAIN FUNCTION =============================================================================
 int main(){
 
-    
+    // 4 + 1 = 5 (00000101)
+    printBin(ALU(0b00000100, 0b00000001, 0x01), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    // 255 + 255 = 510 (idk)
+    printBin(ALU(255, 255, 0x01), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    // 10 - 5 = 5 (00000101)
+    printBin(ALU(10, 5, 0x02), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    // 56 - 123 = -67 (10111101)
+    printBin(ALU(56, 123, 0x02), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    // 255 - 255 = 0
+    printBin(ALU(255, 255, 0x02), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    // 28 + (-28) = 0
+    printBin(ALU(28, 0b11100100, 0x01), 8);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+
 
     return 0;
 }
@@ -72,6 +115,13 @@ void setFlags (unsigned int ACC){
         CF = 1;
     else
         CF = 0;
+}
+
+void printFlags(){
+
+    printf("ZF = %c, SF = %c, OF = %c, CF = %c\n", ZF + '0', SF + '0', OF + '0', CF + '0');
+
+    return;
 }
 
 unsigned char twosComp(unsigned char operand){
