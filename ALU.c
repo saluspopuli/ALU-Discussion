@@ -56,17 +56,23 @@ int main(){
     printf("=====================================");
     printf("\n");
 
-
+    //test output from the pdf
+    printBin(ALU(0b11000000, 0b00001010, 0x03), 16);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
 
     return 0;
 }
 
 // FUNCTIONS =================================================================================
 int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_signal) {
-    unsigned char temp_OP1 = 0x00, temp_OP2 = 0x00;
-
+    unsigned char temp_OP1 = 0x00, temp_OP2 = 0x00, temp_prod = 0x0000;
+    unsigned int n = 0, Q_n1 = 0;
+   
     // Setting ACC and flags to initial values
-    ACC = 0x0000; SF = 0, CF = 0, ZF = 0, OF = 0;
+    ACC = 0x0000; SF = 0, CF = 0, ZF = 0, OF = 0;       
 
     if (control_signal == 0x01 || control_signal == 0x02) { // ADD or SUB
 
@@ -78,16 +84,66 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
         else
             temp_OP2 = operand2;
 
+        // 8-bit adder
         ACC = temp_OP1 + temp_OP2;
+        ACC = ACC & 0x00FF;
+    } 
+    else if (control_signal == 0x03){ // MUL 
+        temp_OP2 = operand2;
+        printf("Fetching operands...\n");
+        printf("OP1: ");
+        printBin(operand1, 8);
+        printf("\n");
+        printf("OP2: ");
+        printBin(operand2, 8);
+        printf("\nOperation: MUL\n");
+        printf("            A               Q          Q_n1        M            n\n");
+        for(n = 0; n < 9; n++){
 
-    } else if (control_signal == 0x02){ // MUL
-        //Mohan's code here
+            printf("\t");
+            printBin(temp_prod, 8);
+            printf("\t");
+            printBin(temp_OP2, 8);
+            printf("\t");
+            printf("%d", Q_n1);
+            printf("\t");
+            printBin(operand1, 8); 
+            printf("\t");
+            printf("%d", n);
+            printf("\n");
+            
+            //check Q, Q_n1 conditions
+            unsigned int MSB_A = (temp_prod >> 8) & 0x01; // most significant bit of temp_prod (A)
+            unsigned int LSB_A = temp_prod & 0x01; // least significant bit of temp_prod (A)
+            unsigned int LSB_Q = temp_OP2 & 0x01; // least significant bit of temp_OP2 (Q)
+ 
+            if(LSB_Q > Q_n1){        
+                temp_OP1 = twosComp(operand1);             // 10
+                temp_prod = temp_OP1 + temp_prod; // A <-- A - M
+
+            } 
+            else if(LSB_Q < Q_n1){                // 01
+                temp_prod = operand1 + temp_prod ; // A <-- A + M
+            }
+            //Arithmetic Shift Right
+            MSB_A = (temp_prod >> 7) & 0x01; // most significant bit of temp_prod (A)
+            LSB_A = temp_prod & 0x01; // least significant bit of temp_prod (A)
+            LSB_Q = temp_OP2 & 0x01;
+           temp_prod = temp_prod >> 1;
+            temp_OP2 = temp_OP2 >> 1;
+
+            temp_OP2 = temp_OP2 | (LSB_A << 7); // LSB of temp_prod (A) assigned to MSB of temp_OP2 (Q)
+
+            Q_n1 = LSB_Q; // Q_n1 receives LSB of temp_OP2
+            
+            temp_prod = temp_prod | (MSB_A << 7); // LSB of temp_prod (A) assigned to MSB of temp_prod (A) afer shifting
+
+        }
+        printf("ACC:");
+        ACC = temp_prod << 8 | temp_OP2;
     }
-
+    
     setFlags(ACC);
-
-    ACC = ACC & 0x00FF;
-
     return(ACC);
 }
 
