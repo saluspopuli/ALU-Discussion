@@ -140,7 +140,6 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
             temp_prod = temp_prod | (MSB_A << 7); // LSB of temp_prod (A) assigned to MSB of temp_prod (A) afer shifting
 
         }
-        printf("ACC:");
         ACC = temp_prod << 8 | temp_OP2;
 
     } else if (control_signal == 0x04){ // AND
@@ -170,6 +169,9 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
     }
     
     setFlags(ACC);
+
+    if (control_signal == 0x01 || control_signal == 0x02)
+        ACC = ACC & 0x00FF;
     
     return(ACC);
 }
