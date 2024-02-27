@@ -14,50 +14,29 @@ void printBin(unsigned int data, unsigned char data_width);
 // MAIN FUNCTION =============================================================================
 int main(){
 
-    // 4 + 1 = 5 (00000101)
-    printBin(ALU(0b00000100, 0b00000001, 0x01), 16);
+    unsigned int tmp;
+    // 3 - 5
+    tmp = ALU(0b00000011, 0b00000101, 0x02);
+    printf("\nALU: ");
+    printBin(tmp, 16);
     printf("\n");
-    printFlags();
     printf("=====================================");
-    printf("\n");
 
-    // 255 + 255 = 510 (idk)
-    printBin(ALU(255, 255, 0x01), 16);
+    tmp = ALU(-120, -123, 0x01);
+    printf("\nALU: ");
+    printBin(tmp, 16);
     printf("\n");
-    printFlags();
     printf("=====================================");
-    printf("\n");
-
-    // 10 - 5 = 5 (00000101)
-    printBin(ALU(10, 5, 0x02), 16);
-    printf("\n");
-    printFlags();
-    printf("=====================================");
-    printf("\n");
-
-    // 56 - 123 = -67 (10111101)
-    printBin(ALU(56, 123, 0x02), 16);
-    printf("\n");
-    printFlags();
-    printf("=====================================");
-    printf("\n");
-
-    // 255 - 255 = 0
-    printBin(ALU(255, 255, 0x02), 16);
-    printf("\n");
-    printFlags();
-    printf("=====================================");
-    printf("\n");
-
-    // 28 + (-28) = 0
-    printBin(ALU(28, 0b11100100, 0x01), 16);
-    printf("\n");
-    printFlags();
-    printf("=====================================");
-    printf("\n");
+    
 
     //test output from the pdf
     printBin(ALU(0b11000000, 0b00001010, 0x03), 16);
+    printf("\n");
+    printFlags();
+    printf("=====================================");
+    printf("\n");
+
+    printBin(ALU(0b01000110, 0b00000010, 0x03), 16);
     printf("\n");
     printFlags();
     printf("=====================================");
@@ -74,28 +53,35 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
     // Setting ACC and flags to initial values
     ACC = 0x0000; SF = 0, CF = 0, ZF = 0, OF = 0;       
 
+    printf("\nFetching operands...\n");
+    printf("OP1: ");
+    printBin(operand1, 8);
+    printf("\n");
+    printf("OP2: ");
+    printBin(operand2, 8);
+
     if (control_signal == 0x01 || control_signal == 0x02) { // ADD or SUB
 
         // Sign and Operation Check Logic
         temp_OP1 = operand1;
 
-        if (control_signal == 0x02)
+        if (control_signal == 0x02){
             temp_OP2 = twosComp(operand2);
-        else
+            printf("\nOperation: SUB");
+            printf("\n2's Complement OP2\n");
+        }
+        else {
             temp_OP2 = operand2;
-
+            printf("\nOperation: ADD\n");
+        }
         // 8-bit adder
+        printf("Adding OP1 & OP2");
         ACC = temp_OP1 + temp_OP2;
 
     } else if (control_signal == 0x03){ // MUL 
 
         temp_OP2 = operand2;
-        printf("Fetching operands...\n");
-        printf("OP1: ");
-        printBin(operand1, 8);
-        printf("\n");
-        printf("OP2: ");
-        printBin(operand2, 8);
+        
         printf("\nOperation: MUL\n");
         printf("            A               Q          Q_n1        M            n\n");
         for(n = 0; n < 9; n++){
@@ -169,9 +155,6 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
     }
     
     setFlags(ACC);
-
-    if (control_signal == 0x01 || control_signal == 0x02)
-        ACC = ACC & 0x00FF;
     
     return(ACC);
 }
