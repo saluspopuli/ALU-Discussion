@@ -15,7 +15,8 @@ void printBin(unsigned int data, unsigned char data_width);
 int main(){
 
     unsigned int tmp;
-    // 3 - 5
+    
+    // ADDITION AND SUBTRACTION TEST CASES
     tmp = ALU(0b00000011, 0b00000101, 0x02);
     printf("\nALU: ");
     printBin(tmp, 16);
@@ -29,7 +30,7 @@ int main(){
     printf("=====================================");
     
 
-    //test output from the pdf
+    //MUL TEST CASES
     printBin(ALU(0b11000000, 0b00001010, 0x03), 16);
     printf("\n");
     printFlags();
@@ -45,7 +46,19 @@ int main(){
     return 0;
 }
 
-// FUNCTIONS =================================================================================
+// FUNCTIONS =======================================================================================
+
+// =================================================================================================
+// ALU
+// Description: Function that emulates the basic operation of an ALU
+//
+// INPUT:
+// - unsigned char operand1 = Stores the first operand as an 8-bit value
+// - unsigned char operand2 = Stores the second operand as an 8-bit value
+// - unsigned char control_signal = Stores the control signal that determines the type of operation
+// OUTPUT:
+// - ACC = returns an unsigned int which is the result of the operations done
+// =================================================================================================
 int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_signal) {
     unsigned char temp_OP1 = 0x00, temp_OP2 = 0x00, temp_prod = 0x0000;
     unsigned int n = 0, Q_n1 = 0;
@@ -62,20 +75,24 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
 
     if (control_signal == 0x01 || control_signal == 0x02) { // ADD or SUB
 
-        // Sign and Operation Check Logic
         temp_OP1 = operand1;
 
-        if (control_signal == 0x02){
+        if (control_signal == 0x02){            // Checks if operation is Subtraction
+            
             temp_OP2 = twosComp(operand2);
+            
             printf("\nOperation: SUB");
             printf("\n2's Complement OP2\n");
-        }
-        else {
+        }   
+        else {                                  // If not subtraction, just set operand2 to temp_OP2
+            
             temp_OP2 = operand2;
+
             printf("\nOperation: ADD\n");
         }
         // 8-bit adder
         printf("Adding OP1 & OP2");
+        
         ACC = temp_OP1 + temp_OP2;
 
     } else if (control_signal == 0x03){ // MUL 
@@ -159,6 +176,14 @@ int ALU(unsigned char operand1, unsigned char operand2, unsigned char control_si
     return(ACC);
 }
 
+// =================================================================================================
+// setFlags
+// Description: Function that changes flag values based on ALU results, function is only used within
+//              the ALU function
+//
+// INPUT:
+// - unsigned int ACC = The result of ALU functions
+// =================================================================================================
 void setFlags (unsigned int ACC){
     
     unsigned char tmp_ACC = ACC;
@@ -188,6 +213,10 @@ void setFlags (unsigned int ACC){
         CF = 0;
 }
 
+// =================================================================================================
+// printFlags
+// Description: Utility function that just prints the flags              
+// =================================================================================================
 void printFlags(){
 
     printf("ZF = %c, SF = %c, OF = %c, CF = %c\n", ZF + '0', SF + '0', OF + '0', CF + '0');
@@ -195,6 +224,15 @@ void printFlags(){
     return;
 }
 
+// =================================================================================================
+// twosComp
+// Description: Function that performs twos complement on a given operand
+//
+// INPUT:
+// - unsigned char operand = operand that is to be 2's complemented.
+// OUTPUT:
+// - operand = The operand that is now 2's complemented
+// =================================================================================================
 unsigned char twosComp(unsigned char operand){
     operand = ~operand; // Operand is bitwise inverted
     operand = operand + 1; // 1 is added to finish twos complement
@@ -202,6 +240,14 @@ unsigned char twosComp(unsigned char operand){
     return operand;
 }
 
+// =================================================================================================
+// printBin
+// Description: Utility function that prints the binary of given data
+//
+// INPUT:
+// - unsigned int data = Given data that is to be printed
+// - unsigned char data_width = The number of bits to be printed from the data
+// =================================================================================================
 void printBin(unsigned int data, unsigned char data_width){
     
     unsigned char tmp_data;
