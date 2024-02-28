@@ -1,3 +1,24 @@
+// ===========================================================================================
+//                                       == ALU.c ==
+//          Team 6:
+//              Berondo, Jamille
+//              Cortez, Andre
+//              Francis, Mohan Nuelle
+//              Gere, Rodjean
+//
+//          Description: 
+//              C code that emulates the basic functions of an ALU
+//
+//          Revision History:
+//              1.0 - Created ALU function with addition and subtraction
+//              1.1 - Added MUL function
+//              1.2 - Added bitwise operations
+//              1.3 - Added documentation
+//
+//          Last Revision Date:
+//              February 28, 2024
+//
+// ===========================================================================================
 #include <stdio.h>
 
 // GLOBAL VARIABLES ==========================================================================
